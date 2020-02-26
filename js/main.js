@@ -22,7 +22,7 @@ do {
     userInput = prompt("Please enter a number from " + inputRangeMin + " to " + inputRangeMax);
     //console.log("userInput is: " + userInput);
     if (checkUserInput(userInput, inputRangeMin, inputRangeMax)) {
-        if (isNumberBombe(bombe, userInput)) {
+        if (bombe.includes(parseInt(userInput))) { //isNumberBombe(bombe, userInput)
             alert("BOOOOM!!!! You have exploded!!!!");
             keepPlaying = false;
         }
@@ -46,6 +46,9 @@ do {
 
 if (userAttempts == maxAttempts) {
     alert("You made it to the end of the game without a BOOM! Congratulations!!")
+}
+else {
+    alert("You made " + userAttempts + " attempts before choosing a boom tile.")
 }
 
 console.log(userNumberList);
@@ -114,7 +117,7 @@ function checkUserInput (value, min, max) {
 
     return validInput;
 }
-
+/*
 function isNumberBombe (bombeArray, number) {
 
     var boom;
@@ -132,3 +135,4 @@ function isNumberBombe (bombeArray, number) {
     //console.log("userAttempts is: " + userAttempts);
     return boom;
 }
+*/
