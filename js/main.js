@@ -1,102 +1,134 @@
-var numberList = []
-var listLength = 16;
+var userNumberList = [];
+var bombe = [];
+var bombaLength = 16;
 var userInput;
 const regExp = '^[0-9]+$';
 const inputRangeMin = 1;
 var inputRangeMax = 100;
 var userAttempts = 0;
-const maxAttempts = inputRangeMax - listLength;
+const maxAttempts = inputRangeMax - bombaLength;
 var userDifficulty;
 
-userDifficulty = parseInt(prompt("Please select difficulty level 0, 1 or 2"));
+userDifficulty = selectDifficulty();
 
-switch (userDifficulty) {
-    case 0:
-        inputRangeMax = 100;
-        break;
-    case 1:
-        inputRangeMax = 80;
-        break;
-    case 2:
-        inputRangeMax = 50;
-        break
-    default:
-        inputRangeMax = 100;
-}
 
-generateRandomNumberList();
+bombe = generateRandomNumberList(bombaLength, inputRangeMin, inputRangeMax);
 
-console.log(numberList);
+console.log(bombe);
+
+var keepPlaying = true;
 
 do {
     userInput = prompt("Please enter a number from " + inputRangeMin + " to " + inputRangeMax);
     //console.log("userInput is: " + userInput);
-} while ((checkUserInput(userInput, inputRangeMin, inputRangeMax) || isNumberInList(userInput)) && (userAttempts < maxAttempts));
+    if (checkUserInput(userInput, inputRangeMin, inputRangeMax)) {
+        if (isNumberBombe(bombe, userInput)) {
+            alert("BOOOOM!!!! You have exploded!!!!");
+            keepPlaying = false;
+        }
+        else {
+            if (userNumberList.includes(userInput)) {
+                alert("You have already entered this number. Please try another one.")
+            }
+            else {
+            userNumberList.push(userInput);
+            userAttempts++;
+            alert("You entered a safe number. Continue.");
+            }
+        }
+    }
+} while ( keepPlaying && (userAttempts < maxAttempts));
+//} while ((checkUserInput(userInput, inputRangeMin, inputRangeMax) || isNumberInList(bombe, userInput)) && (userAttempts < maxAttempts));
 
 //console.log("user entered: " + userInput);
 //console.log("isNumberInList returned: " + isNumberInList(userInput));
 //console.log("checkUserInput returned: " + checkUserInput(userInput, inputRangeMin, inputRangeMax));
 
 if (userAttempts == maxAttempts) {
-    alert("You have exhausted all available tries to guess the numbers in the list. Game Over.")
-}
-else {
-alert("End game result: You have made " + userAttempts + " attempts to guess one number in the list.");
+    alert("You made it to the end of the game without a BOOM! Congratulations!!")
 }
 
-function generateRandomNumberList () {
+console.log(userNumberList);
+
+
+function selectDifficulty () {
+
+var selectDiff;
+var value;
+selectDiff = parseInt(prompt("Please select difficulty level 0, 1 or 2"));
+
+switch (selectDiff) {
+
+    case 0:
+        value = 100;
+        break;
+    case 1:
+        value = 80;
+        break;
+    case 2:
+        value = 50;
+        break
+    default:
+        value = 100;
+}
+    return value;
+}
+
+function generateRandomNumberList (arrayLength, min, max) {
 
     var holdNumber;
+    var tempArray = []
 
-    for (var i = 0; i < listLength; i++) {
+    for (var i = 0; i < arrayLength; i++) {
 
         do {
-            holdNumber = Math.floor(Math.random() * (inputRangeMax - inputRangeMin)) + inputRangeMin;
+            holdNumber = Math.floor(Math.random() * (max - min)) + min;
 
-            if (numberList.includes(holdNumber)) {
+            if (tempArray.includes(holdNumber)) {
                 continueGenerating = true;
                 console.log("Array already has this number: " + holdNumber);
             }
             else {
                 continueGenerating = false;
-                numberList.push(holdNumber);
+                tempArray.push(holdNumber);
                 //console.log("array pushed: " + numberList[i]);
             }
         } while (continueGenerating);
 
         //console.log(numberList[i] + " current position: " + i);
     }
+    return tempArray;
 }
 function checkUserInput (value, min, max) {
 
-    var keepPrompting;
+    var validInput;
 
     if (value.match(regExp) === null || !(value >= min && value <= max)) {
-        keepPrompting = true;
+        validInput = false;
         alert("You have not entered a number from " + min + " to " + max + ". Please try again.");
 
     }
     else {
-        keepPrompting = false;
+        validInput = true;
     }
 
-    return keepPrompting;
+    return validInput;
 }
 
-function isNumberInList (number) {
+function isNumberBombe (bombeArray, number) {
 
-    var keepPrompting;
+    var boom;
 
-    if (numberList.includes(parseInt(number))) {
-            keepPrompting = false;
-            alert("Congratualations! You have entered a number stored on the list.");
+    if (bombeArray.includes(parseInt(number))) {
+            boom = true;
+
     }
     else {
-        keepPrompting = true;
-        alert("You have not entered a number on the list. Please try again.")
+        boom = false;
+        //alert("You have entered a safe number. Continue.")
 
     }
-    userAttempts++;
-    console.log("userAttempts is: " + userAttempts);
-    return keepPrompting;
+    //userAttempts++;
+    //console.log("userAttempts is: " + userAttempts);
+    return boom;
 }
